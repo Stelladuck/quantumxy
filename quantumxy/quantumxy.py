@@ -3,7 +3,6 @@ import numpy as np
 import copy
 import pandas as pd
 from functools import reduce
-
 from scipy import linalg
 
 # Function generating full basis
@@ -78,3 +77,23 @@ def generate_Hamiltonian_with_Pauli_matrices(N, J, h):
     
     return -H
 
+# Function generating magnetization
+def compute_magnetization(state, basis):
+    M = 0.
+    for (i, bstate) in enumerate(basis):
+        bstate_M = 0.
+        for spin in bstate:
+            bstate_M += (state[i]**2 * (1 if spin else -1))/len(bstate)
+        M += bstate_M
+    return M
+
+
+# Function generating correlation
+def compute_correlation(state, basis, r):
+    G = 0
+    for (i, bstate) in enumerate(basis):
+        bstate_G = 0
+        for (spin,spin1) in zip(bstate, rotate(bstate,-r)):
+            bstate_G += (state[i]**2 * (1 if spin else -1) * (1 if spin1 else -1))/len(bstate)
+        G += bstate_G
+    return G
